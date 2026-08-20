@@ -9,7 +9,7 @@ import urllib.request
 
 PORT = 5000
 CONFIG_FILE = "config.json"
-LOG_FILE = "clearance.log"
+LOG_FILE = "UtilityHub.log"
 
 # Set up logger to write to clearance.log
 logging.basicConfig(
@@ -201,7 +201,7 @@ def query_ollama_qwen(user_prompt):
     except Exception as e:
         return {"status": "FAILED", "error": f"Ollama Connection Failed: {str(e)}"}
 
-class ClearanceHandler(http.server.SimpleHTTPRequestHandler):
+class UtilityHandler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         # 1. Main Landing Portal
         if self.path == "/" or self.path == "/index.html":
@@ -353,5 +353,5 @@ class ClearanceHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     print(f"Server starting on port {PORT}... Logging to {LOG_FILE}")
-    with socketserver.TCPServer(("", PORT), ClearanceHandler) as httpd:
+    with socketserver.TCPServer(("", PORT), UtilityHandler) as httpd:
         httpd.serve_forever()

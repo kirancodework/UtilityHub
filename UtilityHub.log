@@ -1,0 +1,1 @@
+2026-08-21 00:56:15 [INFO] [AI Prompt] {"model": "qwen2.5-coder:7b", "prompt": "You are an expert Unix/Linux systems administrator. Provide direct, safe, production-grade Unix shell commands based on user requests. Include a brief 1-line explanation of flags used.\n\nUser Request: hello", "stream": false}
