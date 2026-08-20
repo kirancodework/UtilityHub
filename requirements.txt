@@ -1,0 +1,1 @@
+pip install flask requests pymysql psycopg2-binary

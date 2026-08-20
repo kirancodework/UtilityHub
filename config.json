@@ -1,0 +1,53 @@
+{
+  "SOM": {
+    "host": "10.0.0.1", "port": 3306, "user": "som_user", "password": "som_password", "database": "som_db",
+    "queries": [
+      "DELETE FROM service_registry_item WHERE externalServiceId = '{msisdn}';",
+      "DELETE FROM order_items WHERE external_service_id = '{msisdn}';"
+    ]
+  },
+  "COM": {
+    "host": "10.0.0.2", "port": 3306, "user": "com_user", "password": "com_password", "database": "com_db",
+    "queries": [
+      "UPDATE COM_ORDER_MASTER set ORDER_STATE='Cancelled' WHERE SERVICE_ID='{msisdn}' AND ORDER_STATE NOT IN ('Completed');"
+    ]
+  },
+  "Billing": {
+    "host": "10.0.0.3", "port": 3306, "user": "billing_user", "password": "billing_password", "database": "billing_db",
+    "queries": [
+      "UPDATE BS_SERVICE set status=4 where service_id='{msisdn}';"
+    ]
+  },
+  "NMS": {
+    "host": "10.0.0.4", "port": 3306, "user": "nms_user", "password": "nms_password", "database": "nms_db",
+    "queries_prepaid": [
+      "UPDATE SIM_CREATED SET SIM_TYPE_ID = '2', STATUS = '9' WHERE ICCID IN ('{iccid}');",
+      "UPDATE NUMBER_POOL SET STATUS = 16, connection_type = 2, temp_block_id = 'FREE' WHERE PHONE_NUMBER IN ('{msisdn}');"
+    ],
+    "queries_postpaid": [
+      "UPDATE SIM_CREATED SET SIM_TYPE_ID = '2', STATUS = '9' WHERE ICCID IN ('{iccid}');",
+      "UPDATE NUMBER_POOL SET STATUS = 16, connection_type = 1, temp_block_id = 'FREE' WHERE PHONE_NUMBER IN ('{msisdn}');"
+    ]
+  },
+  "ARM": {
+    "host": "10.0.0.5", "port": 3306, "user": "arm_user", "password": "arm_password", "database": "arm_db",
+    "queries_prepaid": [
+      "UPDATE asset_details SET paired_entity = null, product_id = 9, status_id = 4 WHERE serialnumber IN ('{iccid}');"
+    ],
+    "queries_postpaid": [
+      "UPDATE asset_details SET paired_entity = null, product_id = 29, status_id = 4 WHERE serialnumber IN ('{iccid}');"
+    ]
+  },
+  "SM": {
+    "host": "10.0.0.333", "port": 3306, "user": "sm_user", "password": "sm_password", "database": "sm_db",
+    "queries": [
+      "UPDATE VDRC_UPC.SM_PROFILE_0{last_msisdn_digit} SET STATUS='D' WHERE EXTERNAL_SERVICE_ID='{msisdn}';",
+      "UPDATE VDRC_UPC.SM_SUBSCRIPTION_0{last_msisdn_digit} SET STATUS='D' WHERE EXTERNAL_SERVICE_ID='{msisdn}';",
+      "UPDATE VDRC_UPC.SM_CHARECTERISTIC_PARAM_0{last_msisdn_digit} SET STATUS='D' WHERE EXTERNAL_SERVICE_ID='{msisdn}';",
+      "UPDATE VDRC_UPC.SM_SUBSCRIPTION_TOPUP_0{last_msisdn_digit} SET TOPUP_STATUS='D' WHERE EXTERNAL_SERVICE_ID='{msisdn}';"
+    ]
+  },
+  "ESB": {
+    "curl_command": "curl -k -v --connect-timeout 5 -m 10 -X POST \"https://10.231.8.70:8081/services/BcServices\" --cacert /esb/certificates/ca2.crt -H \"Content-Type: text/xml; charset=utf-8\" -H \"SOAPAction: ''\" -d '<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:bcs=\"http://www.huawei.com/bme/cbsinterface/bcservices\" xmlns:cbs=\"http://www.huawei.com/bme/cbsinterface/cbscommon\" xmlns:bcc=\"http://www.huawei.com/bme/cbsinterface/bccommon\"><soapenv:Header/><soapenv:Body><bcs:SubDeactivationRequestMsg><RequestHeader><cbs:Version>1</cbs:Version><cbs:BusinessCode>SubDeactivation</cbs:BusinessCode><cbs:MessageSeq>630010742471857</cbs:MessageSeq><cbs:OwnershipInfo><cbs:BEID>101</cbs:BEID></cbs:OwnershipInfo><cbs:AccessSecurity><cbs:LoginSystemCode>BSS_TBD</cbs:LoginSystemCode><cbs:Password>9uwyHvwSQNqgY1uYeCOt5LHpfSmwhggWE8SzUmkbDulerAvbW0HWcnQ=</cbs:Password></cbs:AccessSecurity><cbs:OperatorInfo><cbs:OperatorID>102</cbs:OperatorID></cbs:OperatorInfo></RequestHeader><SubDeactivationRequest><bcs:SubAccessCode><bcc:PrimaryIdentity>{primary_identity}</bcc:PrimaryIdentity></bcs:SubAccessCode><bcs:OpType>2</bcs:OpType></SubDeactivationRequest></bcs:SubDeactivationRequestMsg></soapenv:Body></soapenv:Envelope>'"
+  }
+}
