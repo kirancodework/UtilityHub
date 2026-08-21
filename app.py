@@ -174,15 +174,16 @@ def query_ollama_qwen(user_prompt):
     ollama_url = "http://localhost:11434/api/generate"
     
     # System prompt enforcing strict Unix command generation
-    system_instruction = (
-        "You are an expert Unix/Linux systems administrator. "
-        "Provide direct, safe, production-grade Unix shell commands based on user requests. "
-        "Include a brief 1-line explanation of flags used."
-    )
-    
+    # system_instruction = (
+    #     "You are an expert Unix/Linux systems administrator. "
+    #     "Provide direct, safe, production-grade Unix shell commands based on user requests. "
+    #     "Include a brief 1-line explanation of flags used."
+    # )
+
     payload = {
         "model": "qwen2.5-coder:7b",
-        "prompt": f"{system_instruction}\n\nUser Request: {user_prompt}",
+        # "prompt": f"{system_instruction}\n\nUser Request: {user_prompt}",
+        "prompt": {user_prompt},
         "stream": False
     }
     logging.info(f"[AI Prompt] {json.dumps(payload)}")
@@ -351,7 +352,13 @@ class UtilityHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_error(404, "API endpoint not found")
 
+# if __name__ == "__main__":
+#     print(f"Server starting on port {PORT}... Logging to {LOG_FILE}")
+#     with socketserver.TCPServer(("", PORT), UtilityHandler) as httpd:
+#         httpd.serve_forever()
+
 if __name__ == "__main__":
     print(f"Server starting on port {PORT}... Logging to {LOG_FILE}")
-    with socketserver.TCPServer(("", PORT), UtilityHandler) as httpd:
+    # Change "" or "localhost" to "0.0.0.0"
+    with socketserver.TCPServer(("0.0.0.0", PORT), UtilityHandler) as httpd:
         httpd.serve_forever()

@@ -1,0 +1,20 @@
+# Ignore log files
+*.log
+UtilityHub.log
+
+# Ignore local config files containing sensitive DB/API credentials
+config.json
+
+# Ignore SSL certificate files
+*.pem
+*.crt
+*.key
+
+# Ignore Python runtime artifacts
+__pycache__/
+*.pyc
+
+# Ignore OS & IDE metadata
+.vscode/
+.idea/
+.DS_Store
