@@ -183,7 +183,7 @@ def query_ollama_qwen(user_prompt):
     payload = {
         "model": "qwen2.5-coder:7b",
         # "prompt": f"{system_instruction}\n\nUser Request: {user_prompt}",
-        "prompt": {user_prompt},
+        "prompt": f"{user_prompt}",
         "stream": False
     }
     logging.info(f"[AI Prompt] {json.dumps(payload)}")
@@ -196,7 +196,7 @@ def query_ollama_qwen(user_prompt):
             data=json.dumps(payload).encode('utf-8'),
             headers={'Content-Type': 'application/json'}
         )
-        with urllib.request.urlopen(req, timeout=30) as response:
+        with urllib.request.urlopen(req, timeout=120) as response:
             res_data = json.loads(response.read().decode('utf-8'))
             return {"status": "SUCCESS", "result": res_data.get("response", "")}
     except Exception as e:
@@ -359,6 +359,9 @@ class UtilityHandler(http.server.SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
     print(f"Server starting on port {PORT}... Logging to {LOG_FILE}")
-    # Change "" or "localhost" to "0.0.0.0"
+    
+    # Enable address reuse to prevent WinError 10048 on rapid restarts
+    socketserver.TCPServer.allow_reuse_address = True
+    
     with socketserver.TCPServer(("0.0.0.0", PORT), UtilityHandler) as httpd:
         httpd.serve_forever()
